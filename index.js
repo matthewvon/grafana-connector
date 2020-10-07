@@ -287,7 +287,12 @@ router
 
           datapoints = newDatapoints;
         }
-      }   // if
+      } else if (1.0 != factor) {    
+        for (let i = 0; i < datapoints.length; i++) {
+          datapoints[i][0] = datapoints[i][0] * factor;
+        }
+      }
+      
       if (type === "table") {
         response.push({
           target,
