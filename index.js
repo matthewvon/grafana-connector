@@ -287,12 +287,34 @@ router
 
           datapoints = newDatapoints;
         }
-      } else if (1.0 != factor) {    
-        for (let i = 0; i < datapoints.length; i++) {
-          datapoints[i][0] = datapoints[i][0] * factor;
-        }
+      } else {  // not derive
+          if (undefined === summaryField) {
+              if (1.0 != factor) {
+                  for (let i = 0; i < datapoints.length; i++) {
+                      datapoints[i][0] = datapoints[i][0] * factor;
+                  }
+              }
+          } else {
+              let total = 0;
+              let prevTime2 = 0;
+              let newDatapoints = [];
+              for (let i = 0; i < datapoints.length; i++) {
+                  datapoints[i][0] = datapoints[i][0] * factor;
+                  if (prevTime2 != datapoints[i][1]) {
+                      if (0 != prevTime2) {
+                          newDatapoints.push([total, prevTime2]);
+                      }
+                      prevTime2 = datapoints[i][1];
+                      total = 0;
+                  }
+                  total = total + datapoints[i][0];
+              } // for
+              newDatapoints.push([total, prevTime2]);
+
+              datapoints = newDatapoints;
+          }
       }
-      
+
       if (type === "table") {
         response.push({
           target,
